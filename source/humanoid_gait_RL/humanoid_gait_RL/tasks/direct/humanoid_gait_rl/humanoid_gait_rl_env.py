@@ -85,12 +85,12 @@ class HumanoidGaitRlEnv(DirectRLEnv):
         self.robot = Articulation(self.cfg.robot_cfg)
         self.height_scanner = RayCaster(self.cfg.height_scanner)
         self.ankle_contact_sensor = ContactSensor(self.cfg.ankle_contact_forces)
-        self.torso_contach_sensor = ContactSensor(self.cfg.torso_contact_forces)
+        self.torso_contact_sensor = ContactSensor(self.cfg.torso_contact_forces)
         
         self.scene.articulations["robot"] = self.robot
         self.scene.sensors['height_scanner'] = self.height_scanner
         self.scene.sensors['ankle_contact_sensor'] = self.ankle_contact_sensor
-        self.scene.sensors['torso_contact_sensor'] = self.torso_contach_sensor
+        self.scene.sensors['torso_contact_sensor'] = self.torso_contact_sensor
         
         # clone and replicate
         self.scene.clone_environments(copy_from_source=False)
@@ -289,7 +289,7 @@ class HumanoidGaitRlEnv(DirectRLEnv):
         time_out = self.episode_length_buf >= self.max_episode_length - 1
                     
         # If torso is in contact with the ground, the episode is over
-        net_contact_forces = self.torso_contach_sensor.data.net_forces_w_history
+        net_contact_forces = self.torso_contact_sensor.data.net_forces_w_history
         illegal_contact = torch.any(
             torch.max(torch.norm(net_contact_forces[:, :, [0]], dim=-1), dim=1)[0] > 1.0, dim=1)
         
