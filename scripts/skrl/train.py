@@ -75,6 +75,8 @@ simulation_app = app_launcher.app
 import gymnasium as gym
 import os
 import random
+import pickle
+import yaml
 from datetime import datetime
 
 import omni
@@ -104,7 +106,6 @@ from isaaclab.envs import (
 )
 from isaaclab.utils.assets import retrieve_file_path
 from isaaclab.utils.dict import print_dict
-from isaaclab.utils.io import dump_pickle, dump_yaml
 
 from isaaclab_rl.skrl import SkrlVecEnvWrapper
 
@@ -120,6 +121,15 @@ if args_cli.agent is None:
 else:
     agent_cfg_entry_point = args_cli.agent
 
+def dump_pickle(filename, data):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, "wb") as f:
+        pickle.dump(data, f)
+
+def dump_yaml(filename, data, sort_keys=False):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, "w") as f:
+        yaml.dump(data, f, sort_keys=sort_keys)
 
 @hydra_task_config(args_cli.task, agent_cfg_entry_point)
 def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: dict):
